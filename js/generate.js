@@ -13,36 +13,40 @@ let Aquarium = function(){
     }
 
     this.generationDePoisson = function(){
+       
        for(let i = 0; i < this.poissonArray.length;i++){
            this.collision(this.poissonArray[i]);
+           this.follow(this.poissonArray[i]);
            this.ctx.fillStyle = "red";
            this.ctx.fillRect(this.poissonArray[i].x,this.poissonArray[i].y, this.poissonArray[i].width, this.poissonArray[i].height)
            this.poissonArray[i].move();
-        //    console.log(this.poissonArray[i].x)
        }
-
-       this.collision = function(poisson) {
-        if(poisson.y <=0 || poisson.y >= 480){
-            poisson.random.y = -poisson.random.y;
-        } else if(poisson.x <= 0 || poisson.x >=480){
-         poisson.random.x = -poisson.random.x;
-        }
-     }
-    
     }
 
+    this.distance = function(poissonA, poissonB){
+        return Math.sqrt((poissonA.x - poissonB.x) ** 2 + (poissonA.y - poissonB.y) ** 2);
+    }
+
+    this.follow = function(poisson){
+            for(let l = 0; l < this.poissonArray.length; l++){
+                if(poisson !== this.poissonArray[l] && this.poissonArray.length > 1 && this.distance(poisson, this.poissonArray[l]) <= 25){
+                    this.poissonArray[l].random.x = poisson.random.x;
+                    this.poissonArray[l].random.y = poisson.random.y;
+                }
+        }
+         
+    }
     this.update = function(){
         this.ctx.clearRect(0,0,500,500);
         this.generationDePoisson();
     }
-    
-    this.collision = function() {
-        for(let j = 0; j < this.poissonArray.length; j++){
-            if(this.poissonArray[j].y <= 100){
-                this.poissonArray[j].x -= this.poissonArray[j].random.x;
-                this.poissonArray[j].x -= this.poissonArray[j].random.x;
-            }
-        }
+
+    this.collision = function(poisson) {
+       if(poisson.y <=0 || poisson.y >= 480){
+           poisson.random.y = -poisson.random.y;
+       } else if(poisson.x <= 0 || poisson.x >=480){
+        poisson.random.x = -poisson.random.x;
+       }
     }
 }
 
@@ -60,4 +64,5 @@ let Fish = function(x, y){
         this.x += this.random.x;
         this.y += this.random.y;
     }
+
 }
